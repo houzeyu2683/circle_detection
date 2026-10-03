@@ -2,7 +2,7 @@ import cv2
 import numpy
 import typing
 import tqdm
-import tools
+import s1_tools
 
 class Picture:
 
@@ -87,12 +87,12 @@ if __name__=='__main__':
     group_circles = []
     for attempt_size in [150, 300, 600]:
         # 給定一個尺度，找出這個尺度的候選圓（原圖座標）
-        candidate_circles = tools.get_candidate_circles(image_path, attempt_size)
+        candidate_circles = s1_tools.get_candidate_circles(image_path, attempt_size)
         group_circles += candidate_circles
         print(len(candidate_circles))
         continue
 
-    selected_circles = tools.get_selected_circles(group_circles)
+    selected_circles = s1_tools.get_selected_circles(group_circles)
     print(len(selected_circles))
 
     # 把選上的圓畫在彩色原圖上存檔，用眼睛確認結果
