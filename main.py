@@ -1,6 +1,8 @@
 import cv2
 import numpy
-
+import typing
+import tqdm
+import tools
 
 class Picture:
 
@@ -39,12 +41,66 @@ class Picture:
         self.gray_image = gray_image
         return True
 
+    def get_image_shape(
+        self, image_mode: typing.Literal['color', 'gray'] = 'gray'
+    ) -> tuple:
+
+        if image_mode == 'gray':
+            image_shape = self.gray_image.shape
+            return image_shape
+
+        image_shape = self.color_image.shape
+        return image_shape
+
+    def draw_circles(self, target_circles: list, save_path: str) -> bool:
+        """把圓畫在彩色原圖上，存到 save_path。"""
+
+        # 畫在複製品上，原本的 self.color_image 不會被改到
+        draw_image = self.color_image.copy()
+
+        for target_circle in target_circles:
+            # 只用前三個值，有沒有分數都可以
+            center_x, center_y, circle_radius = target_circle[:3]
+            # cv2.circle 只接受整數
+            circle_center = (int(round(center_x)), int(round(center_y)))
+            # 紅色圓周 (B, G, R) = (0, 0, 255)，線條粗細 2
+            cv2.circle(
+                draw_image, circle_center, int(round(circle_radius)),
+                (0, 0, 255), 2,
+            )
+            # 綠色圓心點，粗細 -1 = 塗滿
+            cv2.circle(draw_image, circle_center, 3, (0, 255, 0), -1)
+
+        # cv2.imwrite 存檔成功回傳 True，失敗回傳 False
+        is_saved = cv2.imwrite(save_path, draw_image)
+        return is_saved
+
     pass
 
 if __name__=='__main__':
 
     image_path = './Data/sample_03.jpg'
     picture = Picture(image_path)
-    color_image = picture.read_image()
-    print('圖片大小（高, 寬, 顏色數）：', color_image.shape)
+    picture.read_color_image()
+    picture.read_gray_image()
+
+    group_circles = []
+    for attempt_size in [150, 300, 600]:
+        # 給定一個尺度，找出這個尺度的候選圓（原圖座標）
+        candidate_circles = tools.get_candidate_circles(image_path, attempt_size)
+        group_circles += candidate_circles
+        print(len(candidate_circles))
+        continue
+
+    selected_circles = tools.get_selected_circles(group_circles)
+    print(len(selected_circles))
+
+    # 把選上的圓畫在彩色原圖上存檔，用眼睛確認結果
+    save_path = './check.jpg'
+    is_saved = picture.draw_circles(selected_circles, save_path)
+    print('存檔成功：', is_saved, save_path)
     pass
+
+
+
+# 
