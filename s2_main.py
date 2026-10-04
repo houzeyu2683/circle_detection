@@ -79,7 +79,7 @@ class Picture:
 
 if __name__=='__main__':
 
-    image_path = './Data/sample_03.jpg'
+    image_path = './Data/sample_05.jpg'
     picture = Picture(image_path)
     picture.read_color_image()
     picture.read_gray_image()

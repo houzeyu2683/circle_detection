@@ -89,9 +89,9 @@ if __name__=='__main__':
         [437.625, 298.125, 89.7750015258789, 0.9861111111111112],
         [509.625, 133.875, 86.8499984741211, 1.0],
         [689.625, 199.125, 96.07500457763672, 0.875],
-        [91.125, 401.625, 76.04999542236328, 0.6666666666666666],
-        [712.125, 439.875, 65.92499542236328, 0.7083333333333334],
-        [331.875, 419.625, 61.42499923706055, 0.6805555555555556],
+        # [91.125, 401.625, 76.04999542236328, 0.6666666666666666],
+        # [712.125, 439.875, 65.92499542236328, 0.7083333333333334],
+        # [331.875, 419.625, 61.42499923706055, 0.6805555555555556],
     ]
     print(len(detected_circles))
 
@@ -108,15 +108,15 @@ if __name__=='__main__':
     print(median_radius, blur_sigma, gradient_magnitude.shape)
 
     # 2. 拿一個圓練習：左下那個偏掉的圓
-    center_x, center_y, circle_radius, _ = detected_circles[4]
+    center_x, center_y, circle_radius, _ = detected_circles[0]
 
     # 90 條射線的方向，直著排，形狀 (90, 1)
     ray_angles = numpy.linspace(0, 2 * numpy.pi, 90, endpoint=False)
     direction_x = numpy.cos(ray_angles)[:, None]
     direction_y = numpy.sin(ray_angles)[:, None]
 
-    # 每條射線上 31 個點，離圓心 0.85r ～ 1.15r，橫著排，形狀 (1, 31)
-    sample_radius = circle_radius * numpy.linspace(0.85, 1.15, 31)[None, :]
+    # 每條射線上 31 個點，離圓心 0.85r ～ 1.15r，橫著排，形狀 (1, 11)
+    sample_radius = circle_radius * numpy.linspace(0.90, 1.10, 11)[None, :]
 
     # (90, 1) × (1, 31) → (90, 31)
     sample_x = numpy.round(center_x + sample_radius * direction_x).astype(int)

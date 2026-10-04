@@ -181,15 +181,15 @@ def get_detected_circles(
         dp=1,
         minDist=target_radius * 0.25,
         param1=80,
-        param2=25,
-        minRadius=int(target_radius * 0.8),
-        maxRadius=int(target_radius * 1.2),
+        param2=12,
+        minRadius=int(target_radius * 0.6),
+        maxRadius=int(target_radius * 1.4),
     )
     # 一個都沒猜到時，cv2 回傳 None
     if source_circles is None:
         return []
 
-    # 5. 打分數 + 過濾：強邊緣取前 35%，分數 ≥ 0.7 才留下
+    # 5. 打分數 + 過濾：強邊緣取前 35%，分數 ≥ 0.8 才留下
     strong_threshold = numpy.quantile(gradient_magnitude, 0.65)
     passed_circles = []
     for center_x, center_y, circle_radius in source_circles[0]:
@@ -198,7 +198,7 @@ def get_detected_circles(
             gradient_x, gradient_y, gradient_magnitude,
             strong_threshold,
         )
-        if circle_score < 0.7:
+        if circle_score < 0.8:
             continue
         passed_circles.append(
             [center_x, center_y, circle_radius, circle_score]
